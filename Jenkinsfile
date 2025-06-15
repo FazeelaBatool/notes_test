@@ -6,6 +6,7 @@ pipeline {
         TEST_REPO = 'https://github.com/FazeelaBatool/notes_test.git'
         APP_IMAGE = 'notes-app'
         TEST_IMAGE = 'notes-app-tests'
+        RECEIVER_EMAIL = 'qasimalik@gmail.com'
     }
 
     stages {
@@ -50,7 +51,6 @@ pipeline {
                     echo "🚀 Starting Notes App..."
                     docker run -d --name notes-running -p 8081:8080 ${APP_IMAGE}
 
-
                     echo "⏳ Waiting for app to start..."
                     sleep 40
                 '''
@@ -69,26 +69,19 @@ pipeline {
 
     post {
         success {
-            script {
-                def authorEmail = sh(script: "git --no-pager show -s --format='%ae' HEAD", returnStdout: true).trim()
-                emailext(
-                    subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    body: "All Selenium tests for the Notes App passed successfully.\n\n🔗 ${env.BUILD_URL}",
-                    to: authorEmail
-                )
-            }
+            emailext(
+                subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "All Selenium tests for the Notes App passed successfully.\n\n🔗 ${env.BUILD_URL}",
+                to: "${RECEIVER_EMAIL}"
+            )
         }
-
         failure {
-            script {
-                def authorEmail = sh(script: "git --no-pager show -s --format='%ae' HEAD", returnStdout: true).trim()
-                emailext(
-                    subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    body: "Some test cases failed. Please check Jenkins logs.\n\n🔗 ${env.BUILD_URL}",
-                    to: authorEmail,
-                    attachLog: true
-                )
-            }
+            emailext(
+                subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Some test cases failed. Please check Jenkins logs.\n\n🔗 ${env.BUILD_URL}",
+                to: "${RECEIVER_EMAIL}",
+                attachLog: true
+            )
         }
     }
 }
