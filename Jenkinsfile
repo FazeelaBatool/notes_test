@@ -6,7 +6,7 @@ pipeline {
         TEST_REPO = 'https://github.com/FazeelaBatool/notes_test.git'
         APP_IMAGE = 'notes-app'
         TEST_IMAGE = 'notes-app-tests'
-        RECEIVER_EMAIL = 'qasimalik@gmail.com'
+        RECEIVER_EMAIL = 'fazeelabtl@gmail.com'
     }
 
     stages {
