@@ -9,7 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class NotesAppTests(unittest.TestCase):
-    BASE_URL = "http://56.228.28.226:8080/"
+    BASE_URL = "http://localhost:8081/"
 
     @classmethod
     def setUpClass(cls):
