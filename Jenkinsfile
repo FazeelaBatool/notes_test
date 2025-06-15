@@ -48,7 +48,8 @@ pipeline {
                     docker rm -f notes-running || true
 
                     echo "🚀 Starting Notes App..."
-                    docker run -d --name notes-running -p 8080:8080 ${APP_IMAGE}
+                    docker run -d --name notes-running -p 8081:8080 ${APP_IMAGE}
+
 
                     echo "⏳ Waiting for app to start..."
                     sleep 40
