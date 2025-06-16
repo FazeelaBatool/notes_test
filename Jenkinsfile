@@ -6,7 +6,6 @@ pipeline {
         TEST_REPO = 'https://github.com/FazeelaBatool/notes_test.git'
         APP_IMAGE = 'notes-app'
         TEST_IMAGE = 'notes-app-tests'
-        RECEIVER_EMAIL = 'fazeelabtl@gmail.com'
     }
 
     stages {
@@ -45,14 +44,14 @@ pipeline {
         stage('🚀 Run Notes App Container') {
             steps {
                 sh '''
-                    echo "🧹 Cleaning up old containers..."
+                    echo "🧹 Cleaning up any old containers..."
                     docker rm -f notes-running || true
 
-                    echo "🚀 Starting Notes App..."
+                    echo "🚀 Starting Notes App container..."
                     docker run -d --name notes-running -p 8081:8080 ${APP_IMAGE}
 
-                    echo "⏳ Waiting for app to start..."
-                    sleep 40
+                    echo "⏳ Waiting for the app to start..."
+                    sleep 30
                 '''
             }
         }
@@ -60,7 +59,7 @@ pipeline {
         stage('✅ Run Selenium Tests') {
             steps {
                 sh '''
-                    echo "🧪 Running test container..."
+                    echo "🧪 Running tests..."
                     docker run --rm --network host ${TEST_IMAGE}
                 '''
             }
@@ -68,20 +67,9 @@ pipeline {
     }
 
     post {
-        success {
-            emailext(
-                subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: "All Selenium tests for the Notes App passed successfully.\n\n🔗 ${env.BUILD_URL}",
-                to: "${RECEIVER_EMAIL}"
-            )
-        }
-        failure {
-            emailext(
-                subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: "Some test cases failed. Please check Jenkins logs.\n\n🔗 ${env.BUILD_URL}",
-                to: "${RECEIVER_EMAIL}",
-                attachLog: true
-            )
+        always {
+            echo "🧹 Cleaning up app container..."
+            sh 'docker rm -f notes-running || true'
         }
     }
 }
